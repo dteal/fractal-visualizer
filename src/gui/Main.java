@@ -23,7 +23,8 @@ public class Main extends JFrame implements ComponentListener{
 	JMenu file = new JMenu("File");
 	JMenuItem file_exit = new JMenuItem("Exit");
 	JMenu view = new JMenu("View");
-	JCheckBoxMenuItem view_grid = new JCheckBoxMenuItem("Zoom");
+	JCheckBoxMenuItem view_zoom = new JCheckBoxMenuItem("Zoom");
+	JCheckBoxMenuItem view_full = new JCheckBoxMenuItem("Full Screen");
 	JMenu help = new JMenu("Help");
 	JMenuItem help_about = new JMenuItem("About Fractal Visualizer");
 	
@@ -31,6 +32,15 @@ public class Main extends JFrame implements ComponentListener{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Fractal Visualizer");
 		setMinimumSize(new Dimension(200,200));
+		
+		file.add(file_exit);
+		view.add(view_zoom);
+		view.add(view_full);
+		help.add(help_about);
+		menubar.add(file);
+		menubar.add(view);
+		menubar.add(help);
+		setJMenuBar(menubar);
 		
 		fp.addComponentListener(this);
 		add(fp);
