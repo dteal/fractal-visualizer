@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -10,8 +12,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
-public class Main extends JFrame implements ComponentListener{
+public class Main extends JFrame implements ComponentListener, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,9 +36,13 @@ public class Main extends JFrame implements ComponentListener{
 		setTitle("Fractal Visualizer");
 		setMinimumSize(new Dimension(200,200));
 		
+		file_exit.addActionListener(this);
 		file.add(file_exit);
+		view_zoom.addActionListener(this);
 		view.add(view_zoom);
+		view_full.addActionListener(this);
 		view.add(view_full);
+		help_about.addActionListener(this);
 		help.add(help_about);
 		menubar.add(file);
 		menubar.add(view);
@@ -48,12 +55,25 @@ public class Main extends JFrame implements ComponentListener{
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		repaint();
 	}
 	
 	public static void main(String[] args) {
+		
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
 		} catch (Exception e) {
+		    // If Nimbus is not available, fall back to cross-platform
+		    try {
+		        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		    } catch (Exception ex) {
+		        // not worth my time
+		    }
 		}
 		
 		new Main();
@@ -72,6 +92,14 @@ public class Main extends JFrame implements ComponentListener{
 	}
 
 	public void componentShown(ComponentEvent e) {
+		
+	}
+
+
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == file_exit){
+			System.exit(0);
+		}
 		
 	}
 
