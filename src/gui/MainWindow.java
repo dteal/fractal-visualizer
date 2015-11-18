@@ -33,23 +33,34 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	public MainWindow(){
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Fractal Visualizer");
-		setMinimumSize(new Dimension(200,200));
+		setMinimumSize(new Dimension(800,500));
 		
 		toolbar.setFloatable(false);
 		display_mode_select.setMaximumSize(new Dimension(100,50));
 		display_mode_select.addActionListener(this);
 		toolbar.add(display_mode_select);
+		toolbar.addSeparator();
+		x_coord.setColumns(10);
+		x_coord.setMaximumSize(new Dimension(100, 50));
+		toolbar.add(x_coord);
+		y_coord.setColumns(10);
+		y_coord.setMaximumSize(new Dimension(100, 50));
+		toolbar.add(y_coord);
+		toolbar.addSeparator();
 		render_mode_select.setMaximumSize(new Dimension(100,50));
 		render_mode_select.addActionListener(this);
 		toolbar.add(render_mode_select);
+		toolbar.addSeparator();
 		color_mode_select.setMaximumSize(new Dimension(100,50));
 		color_mode_select.addActionListener(this);
 		toolbar.add(color_mode_select);
 		toolbar.addSeparator();
 		zoom_in_button.addActionListener(this);
 		toolbar.add(zoom_in_button);
+		toolbar.addSeparator();
 		zoom_out_button.addActionListener(this);
 		toolbar.add(zoom_out_button);
+		toolbar.addSeparator();
 		full_screen_button.addActionListener(this);
 		toolbar.add(full_screen_button);
 		toolbar.addSeparator();
@@ -86,7 +97,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	}
 
 	public void componentResized(ComponentEvent e) {
-		fp.renderImage();
+		//fp.renderImage();
 		repaint();
 	}
 
@@ -104,6 +115,15 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			fp.color_mode=color_mode_select.getSelectedIndex();
 		}
 		if(e.getSource()==zoom_in_button){
+			fp.zoom_in();
+		}
+		if(e.getSource()==zoom_out_button){
+			fp.zoom_out();
+		}
+		if(e.getSource()==full_screen_button){
+			
+		}
+		if(e.getSource()==save_button){
 			
 		}
 	}
