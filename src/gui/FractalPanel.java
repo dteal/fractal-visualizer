@@ -26,31 +26,31 @@ public class FractalPanel extends JPanel {
 	public double y_max = 2;
 
 	public void zoom_in() {
-		double x_center = (x_min + x_max)/2;
-		double y_center = (y_min + y_max)/2;
-		x_min = (x_min + x_center)/2;
-		x_max = (x_max + x_center)/2;
-		y_min = (y_min + y_center)/2;
-		y_max = (y_max + y_center)/2;
+		double x_center = (x_min + x_max) / 2;
+		double y_center = (y_min + y_max) / 2;
+		x_min = (x_min + x_center) / 2;
+		x_max = (x_max + x_center) / 2;
+		y_min = (y_min + y_center) / 2;
+		y_max = (y_max + y_center) / 2;
 	}
 
 	public void zoom_out() {
-		double x_center = (x_min + x_max)/2;
-		double y_center = (y_min + y_max)/2;
-		x_min = 2*x_min - x_center;
-		x_max = 2*x_max - x_center;
-		y_min = 2*y_min - y_center;
-		y_max = 2*y_max - y_center;
-		if(x_min <= -2){
+		double x_center = (x_min + x_max) / 2;
+		double y_center = (y_min + y_max) / 2;
+		x_min = 2 * x_min - x_center;
+		x_max = 2 * x_max - x_center;
+		y_min = 2 * y_min - y_center;
+		y_max = 2 * y_max - y_center;
+		if (x_min <= -2) {
 			x_min = -2;
 		}
-		if(x_max  >= 2){
+		if (x_max >= 2) {
 			x_max = 2;
 		}
-		if(y_min <= -2){
+		if (y_min <= -2) {
 			y_min = -2;
 		}
-		if(y_max  >= 2){
+		if (y_max >= 2) {
 			y_max = 2;
 		}
 	}
@@ -89,23 +89,27 @@ public class FractalPanel extends JPanel {
 			return;
 		}
 		m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		double frame_aspect_ratio = (double)(width) / ((double)(height));
-		double area_aspect_ratio = (x_max-x_min)/(y_max-y_min);
+		double frame_aspect_ratio = (double) (width) / ((double) (height));
+		double area_aspect_ratio = (x_max - x_min) / (y_max - y_min);
 		double top = y_max;
 		double bottom = y_min;
 		double left = x_min;
 		double right = x_max;
-		if(frame_aspect_ratio > area_aspect_ratio){
-			double scale = (y_max - y_min)*frame_aspect_ratio*0.5;
-			double x_center = (x_min + x_max)/2;
+		if (frame_aspect_ratio > area_aspect_ratio) {
+			double scale = (y_max - y_min) * frame_aspect_ratio * 0.5;
+			double x_center = (x_min + x_max) / 2;
 			left = x_center - scale;
 			right = x_center + scale;
-		}else{
-			double scale = (x_max - x_min)/frame_aspect_ratio*0.5;
-			double y_center = (y_min + y_max)/2;
+		} else {
+			double scale = (x_max - x_min) / frame_aspect_ratio * 0.5;
+			double y_center = (y_min + y_max) / 2;
 			bottom = y_center - scale;
 			top = y_center + scale;
 		}
+		double[][] buffer = new double[m_image.getWidth()][m_image.getHeight()];
+		double min_color = 1000000;
+		double max_color = 0;
+		int max_iterations = 20;
 		for (int x_idx = 0; x_idx < width; x_idx++) {
 			for (int y_idx = 0; y_idx < height; y_idx++) {
 				// The x-coordinate in the complex plane
@@ -113,19 +117,57 @@ public class FractalPanel extends JPanel {
 				// The y-coordinate in the complex plane
 				double y = (top - bottom) * (height - y_idx - 1) / (height - 1) + bottom;
 				Complex coord = new Complex(x, y);
-				
-				int result;
-				if(display_mode==1){
-					result = escape_time_julia(coord, 20);
-				}else{
-					result= escape_time(coord, 20);
+
+				double result;
+				if (display_mode == 1) {
+					result = escape_time_julia(coord, max_iterations);
+				} else {
+					result = escape_time(coord, max_iterations);
 				}
-				m_image.setRGB(x_idx, y_idx, new Color(0, 0, (int) (result * 10)).getRGB());
+
+				if (result < min_color) {
+					min_color = result;
+				}
+				if (result > max_color) {
+					max_color = result;
+				}
+				buffer[x_idx][y_idx] = result;
 			}
 		}
-		if(display_mode==1){
+		for (int x = 0; x < m_image.getWidth(); x++) {
+			for (int y = 0; y < m_image.getHeight(); y++) {
+				m_image.setRGB(x, y, getColor(min_color, max_color, buffer[x][y], max_iterations).getRGB());
+			}
+		}
+		if (display_mode == 1) {
 			j_image = m_image;
 		}
+	}
+
+	public Color getColor(double min, double max, double n, int threshold) {
+		if (n < min) {
+			n = min;
+		}
+		if (n > max) {
+			n = max;
+		}
+		double value = (n - min) / (max - min);
+		Color result;
+		switch (color_mode) {
+		case 0:
+			result = Color.getHSBColor((float)value, (float)1, (float)1);
+			break;
+		case 1:
+			result = Color.getHSBColor(0, 1, (float)value);
+			break;
+		default:
+			result = Color.white;
+			break;
+		}
+		if(n >= threshold){
+			result = Color.black;
+		}
+		return result;
 	}
 
 	// Gives the number of iterations before escaping the Mandelbrot set
