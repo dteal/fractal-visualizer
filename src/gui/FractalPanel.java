@@ -12,39 +12,54 @@ public class FractalPanel extends JPanel {
 	public int display_mode = 0;
 	public int render_mode = 0;
 	public int color_mode = 0;
-	
+
 	public BufferedImage m_image;
 	public BufferedImage j_image;
-	
-	public int width;
-	public int height;
-	public int x_min;
-	public int x_max;
-	public int y_min;
-	public int y_max;
-	
-	public void zoom_in(){}
-	public void zoom_out(){}
-	
-	
+
+	int prev_width = 1;
+	int prev_height = 1;
+	public int width = 1;
+	public int height = 1;
+	public double x_min = -2;
+	public double x_max = 2;
+	public double y_min = -2;
+	public double y_max = 2;
+
+	public void zoom_in() {
+	}
+
+	public void zoom_out() {
+	}
+
+	public void refresh() {
+		width = getWidth();
+		height = getHeight();
+		renderImage();
+	}
+
 	public FractalPanel() {
 		setPreferredSize(new Dimension(500, 500));
-		renderImage();
-		repaint();
 	}
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.drawImage(m_image, 0, 0, null);
+		switch (display_mode) {
+		case 0:
+			g.drawImage(m_image, 0, 0, null);
+			break;
+		case 1:
+			g.drawImage(j_image, 0, 0, null);
+			break;
+		case 2:
+			g.drawImage(m_image, 0, 0, null);
+			g.drawImage(j_image, m_image.getWidth(), 0, null);
+			break;
+		default:
+			g.drawImage(m_image, 0, 0, null);
+		}
 	}
 
 	public void renderImage() {
-		double top = 2; // Top value in complex plane
-		double bottom = -2; // Bottom value in complex plane
-		double left = -2; // Left value in complex plane
-		double right = 2; // Right value in complex plane
-		int width = (int) getSize().getWidth(); // Width of image
-		int height = (int) getSize().getHeight(); // Height of image
 		if (width <= 0 || height <= 0) {
 			m_image = null;
 			return;
@@ -53,12 +68,11 @@ public class FractalPanel extends JPanel {
 		for (int x_idx = 0; x_idx < width; x_idx++) {
 			for (int y_idx = 0; y_idx < height; y_idx++) {
 				// The x-coordinate in the complex plane
-				double x = (right - left) * x_idx / (width - 1) + left;
+				double x = (x_max - x_min) * x_idx / (width - 1) + x_min;
 				// The y-coordinate in the complex plane
-				double y = (top - bottom) * (height - y_idx - 1) / (height - 1) + bottom;
-				// System.out.println(x + " " + y);
-				
-				int result = escape_time(new Complex(x, y), 20);
+				double y = (y_max - y_min) * (height - y_idx - 1) / (height - 1) + y_min;
+				Complex coord = new Complex(x, y);
+				int result = escape_time(coord, 20);
 				m_image.setRGB(x_idx, y_idx, new Color(0, 0, (int) (result * 10)).getRGB());
 			}
 		}
@@ -90,13 +104,13 @@ public class FractalPanel extends JPanel {
 		}
 		return curr.modulus() * Math.log(curr.modulus()) / curr_d.modulus();
 	}
-	
+
 	// Gives the number of iterations before escaping a Julia set
-	public int escape_time_julia(Complex c, int max_iterations){
+	public int escape_time_julia(Complex c, int max_iterations) {
 		Complex seed = new Complex(-0.4, 0.65);
 		Complex curr = c;
 		int iterations = 0;
-		while(curr.modulus() < 2 && iterations < max_iterations){
+		while (curr.modulus() < 2 && iterations < max_iterations) {
 			curr = Complex.add(Complex.multiply(curr, curr), seed);
 			iterations++;
 		}

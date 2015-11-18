@@ -27,7 +27,6 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	JTextField y_coord = new JTextField("Y: 0");
 	JButton zoom_in_button = new JButton("Zoom In");
 	JButton zoom_out_button = new JButton("Zoom Out");
-	JButton full_screen_button = new JButton("Full Screen");
 	JButton save_button = new JButton("Save");
 	
 	public MainWindow(){
@@ -61,9 +60,6 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		zoom_out_button.addActionListener(this);
 		toolbar.add(zoom_out_button);
 		toolbar.addSeparator();
-		full_screen_button.addActionListener(this);
-		toolbar.add(full_screen_button);
-		toolbar.addSeparator();
 		save_button.addActionListener(this);
 		toolbar.add(save_button);
 		toolbar.add(Box.createHorizontalGlue());
@@ -75,6 +71,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		add(fp);
 		
 		pack();
+		fp.refresh();
 		setLocationRelativeTo(null);
 		setVisible(true);
 		repaint();
@@ -97,7 +94,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	}
 
 	public void componentResized(ComponentEvent e) {
-		//fp.renderImage();
+		fp.refresh();
 		repaint();
 	}
 
@@ -107,21 +104,28 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==display_mode_select){
 			fp.display_mode=display_mode_select.getSelectedIndex();
+			fp.refresh();
+			repaint();
 		}
 		if(e.getSource()==render_mode_select){
 			fp.render_mode=render_mode_select.getSelectedIndex();
+			fp.refresh();
+			repaint();
 		}
 		if(e.getSource()==color_mode_select){
 			fp.color_mode=color_mode_select.getSelectedIndex();
+			fp.refresh();
+			repaint();
 		}
 		if(e.getSource()==zoom_in_button){
 			fp.zoom_in();
+			fp.refresh();
+			repaint();
 		}
 		if(e.getSource()==zoom_out_button){
 			fp.zoom_out();
-		}
-		if(e.getSource()==full_screen_button){
-			
+			fp.refresh();
+			repaint();
 		}
 		if(e.getSource()==save_button){
 			
