@@ -28,10 +28,31 @@ public class FractalPanel extends JPanel {
 	public void zoom_in() {
 		double x_center = (x_min + x_max)/2;
 		double y_center = (y_min + y_max)/2;
-		
+		x_min = (x_min + x_center)/2;
+		x_max = (x_max + x_center)/2;
+		y_min = (y_min + y_center)/2;
+		y_max = (y_max + y_center)/2;
 	}
 
 	public void zoom_out() {
+		double x_center = (x_min + x_max)/2;
+		double y_center = (y_min + y_max)/2;
+		x_min = 2*x_min - x_center;
+		x_max = 2*x_max - x_center;
+		y_min = 2*y_min - y_center;
+		y_max = 2*y_max - y_center;
+		if(x_min <= -2){
+			x_min = -2;
+		}
+		if(x_max  >= 2){
+			x_max = 2;
+		}
+		if(y_min <= -2){
+			y_min = -2;
+		}
+		if(y_max  >= 2){
+			y_max = 2;
+		}
 	}
 
 	public void refresh() {
@@ -68,12 +89,29 @@ public class FractalPanel extends JPanel {
 			return;
 		}
 		m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		double frame_aspect_ratio = (double)(width) / ((double)(height));
+		double area_aspect_ratio = (x_max-x_min)/(y_max-y_min);
+		double top = y_max;
+		double bottom = y_min;
+		double left = x_min;
+		double right = x_max;
+		if(frame_aspect_ratio > area_aspect_ratio){
+			double scale = (y_max - y_min)*frame_aspect_ratio*0.5;
+			double x_center = (x_min + x_max)/2;
+			left = x_center - scale;
+			right = x_center + scale;
+		}else{
+			double scale = (x_max - x_min)/frame_aspect_ratio*0.5;
+			double y_center = (y_min + y_max)/2;
+			bottom = y_center - scale;
+			top = y_center + scale;
+		}
 		for (int x_idx = 0; x_idx < width; x_idx++) {
 			for (int y_idx = 0; y_idx < height; y_idx++) {
 				// The x-coordinate in the complex plane
-				double x = (x_max - x_min) * x_idx / (width - 1) + x_min;
+				double x = (right - left) * x_idx / (width - 1) + left;
 				// The y-coordinate in the complex plane
-				double y = (y_max - y_min) * (height - y_idx - 1) / (height - 1) + y_min;
+				double y = (top - bottom) * (height - y_idx - 1) / (height - 1) + bottom;
 				Complex coord = new Complex(x, y);
 				
 				int result;
