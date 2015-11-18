@@ -26,6 +26,9 @@ public class FractalPanel extends JPanel {
 	public double y_max = 2;
 
 	public void zoom_in() {
+		double x_center = (x_min + x_max)/2;
+		double y_center = (y_min + y_max)/2;
+		
 	}
 
 	public void zoom_out() {
@@ -72,9 +75,18 @@ public class FractalPanel extends JPanel {
 				// The y-coordinate in the complex plane
 				double y = (y_max - y_min) * (height - y_idx - 1) / (height - 1) + y_min;
 				Complex coord = new Complex(x, y);
-				int result = escape_time(coord, 20);
+				
+				int result;
+				if(display_mode==1){
+					result = escape_time_julia(coord, 20);
+				}else{
+					result= escape_time(coord, 20);
+				}
 				m_image.setRGB(x_idx, y_idx, new Color(0, 0, (int) (result * 10)).getRGB());
 			}
+		}
+		if(display_mode==1){
+			j_image = m_image;
 		}
 	}
 
