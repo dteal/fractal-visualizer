@@ -9,8 +9,24 @@ public class FractalPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	BufferedImage image;
-
+	public int display_mode = 0;
+	public int render_mode = 0;
+	public int color_mode = 0;
+	
+	public BufferedImage m_image;
+	public BufferedImage j_image;
+	
+	public int width;
+	public int height;
+	public int x_min;
+	public int x_max;
+	public int y_min;
+	public int y_max;
+	
+	public void zoom_in(){}
+	public void zoom_out(){}
+	
+	
 	public FractalPanel() {
 		setPreferredSize(new Dimension(500, 500));
 		renderImage();
@@ -19,7 +35,7 @@ public class FractalPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.drawImage(image, 0, 0, null);
+		g.drawImage(m_image, 0, 0, null);
 	}
 
 	public void renderImage() {
@@ -30,10 +46,10 @@ public class FractalPanel extends JPanel {
 		int width = (int) getSize().getWidth(); // Width of image
 		int height = (int) getSize().getHeight(); // Height of image
 		if (width <= 0 || height <= 0) {
-			image = null;
+			m_image = null;
 			return;
 		}
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		for (int x_idx = 0; x_idx < width; x_idx++) {
 			for (int y_idx = 0; y_idx < height; y_idx++) {
 				// The x-coordinate in the complex plane
@@ -43,7 +59,7 @@ public class FractalPanel extends JPanel {
 				// System.out.println(x + " " + y);
 				
 				int result = escape_time(new Complex(x, y), 20);
-				image.setRGB(x_idx, y_idx, new Color(0, 0, (int) (result * 10)).getRGB());
+				m_image.setRGB(x_idx, y_idx, new Color(0, 0, (int) (result * 10)).getRGB());
 			}
 		}
 	}
