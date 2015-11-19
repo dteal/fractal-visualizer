@@ -123,7 +123,11 @@ public class FractalPanel extends JPanel {
 				if (display_mode == 1) {
 					result = escape_time_julia(coord, max_iterations);
 				} else {
-					result = escape_time(coord, max_iterations);
+					if(render_mode == 1){
+						result = exterior_distance(coord, max_iterations);
+					}else{
+						result = escape_time(coord, max_iterations);
+					}
 				}
 
 				if (result < min_color) {
@@ -187,7 +191,7 @@ public class FractalPanel extends JPanel {
 		Complex curr = new Complex(0, 0);
 		Complex curr_d = new Complex(1, 0);
 		int iterations = 0;
-		while (curr.modulus() < 2 && iterations < max_iterations) {
+		while (iterations < max_iterations) {
 			Complex next = Complex.add(Complex.multiply(curr, curr), c);
 			Complex next_d = Complex.add(Complex.multiply(Complex.multiply(curr, curr_d), new Complex(2, 0)),
 					new Complex(1, 0));
@@ -195,7 +199,10 @@ public class FractalPanel extends JPanel {
 			curr_d = next_d;
 			iterations++;
 		}
-		return curr.modulus() * Math.log(curr.modulus()) / curr_d.modulus();
+		if(curr.modulus() < 2){
+			return 0;
+		}
+		return 2 *curr.modulus() * Math.log(curr.modulus()) / curr_d.modulus();
 	}
 
 	// Gives the number of iterations before escaping a Julia set

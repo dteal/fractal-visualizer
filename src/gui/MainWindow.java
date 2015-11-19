@@ -66,6 +66,8 @@ public class MainWindow extends JFrame
 		render_mode_select.addActionListener(this);
 		toolbar.add(render_mode_select);
 		toolbar.addSeparator();
+		SpinnerModel model = new SpinnerNumberModel(20, 0, 10000, 1);
+		max_iter_chooser.setModel(model);
 		max_iter_chooser.addChangeListener(this);
 		max_iter_chooser.setMaximumSize(new Dimension(100, 50));
 		max_iter_chooser.setMinimumSize(new Dimension(100, 5));
