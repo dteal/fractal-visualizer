@@ -24,6 +24,8 @@ public class FractalPanel extends JPanel {
 	public double x_max = 2;
 	public double y_min = -2;
 	public double y_max = 2;
+	
+	public int max_iterations = 20;
 
 	public void zoom_in() {
 		double x_center = (x_min + x_max) / 2;
@@ -109,7 +111,6 @@ public class FractalPanel extends JPanel {
 		double[][] buffer = new double[m_image.getWidth()][m_image.getHeight()];
 		double min_color = 1000000;
 		double max_color = 0;
-		int max_iterations = 20;
 		for (int x_idx = 0; x_idx < width; x_idx++) {
 			for (int y_idx = 0; y_idx < height; y_idx++) {
 				// The x-coordinate in the complex plane
@@ -158,7 +159,7 @@ public class FractalPanel extends JPanel {
 			result = Color.getHSBColor((float)value, (float)1, (float)1);
 			break;
 		case 1:
-			result = Color.getHSBColor(0, 1, (float)value);
+			result = Color.getHSBColor(0, 0, (float)value);
 			break;
 		default:
 			result = Color.white;
